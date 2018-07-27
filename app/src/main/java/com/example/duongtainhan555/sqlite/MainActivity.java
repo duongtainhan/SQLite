@@ -4,11 +4,23 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.GridLayout;
+import android.widget.LinearLayout;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     SQLiteDB sqLiteDB;
+    RecyclerView recyclerView;
+    ArrayList<NhaHang> arrayRes;
+    NhaHangAdapter nhaHangAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +37,17 @@ public class MainActivity extends AppCompatActivity {
         String insert_1 = "INSERT INTO NhaHang VALUES(null, 'Hu tieu', 20000, 'Quan 1')";
         String insert_2 = "INSERT INTO NhaHang VALUES(null, 'Banh canh', 20000, 'Quan 2')";
         String insert_3 = "INSERT INTO NhaHang VALUES(null, 'Pha lau', 15000, 'Quan 3')";
-        //sqLiteDB.QueryData(insert_3);
+        //sqLiteDB.QueryData(insert_1);
+
+        recyclerView = findViewById(R.id.recycle_view);
+        arrayRes = new ArrayList<>();
+        nhaHangAdapter = new NhaHangAdapter(MainActivity.this,arrayRes);
+
+        GridLayoutManager layoutManager = new GridLayoutManager(MainActivity.this,2);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(nhaHangAdapter);
+
 
         //Get value
         Cursor cursor = sqLiteDB.GetData("SELECT * FROM NhaHang");
@@ -35,7 +57,9 @@ public class MainActivity extends AppCompatActivity {
             String ten_mon_an = cursor.getString(1);
             int gia_mon_an = cursor.getInt(2);
             String dia_diem = cursor.getString(3);
-            Log.d("BBB",ten_mon_an);
+            arrayRes.add(new NhaHang(id,ten_mon_an,gia_mon_an,dia_diem));
         }
+        nhaHangAdapter.notifyDataSetChanged();
+
     }
 }
