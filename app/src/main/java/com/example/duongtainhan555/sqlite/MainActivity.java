@@ -1,14 +1,18 @@
 package com.example.duongtainhan555.sqlite;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 
@@ -16,10 +20,11 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    SQLiteDB sqLiteDB;
+    static SQLiteDB sqLiteDB;
     RecyclerView recyclerView;
     ArrayList<NhaHang> arrayRes;
     NhaHangAdapter nhaHangAdapter;
+    Button btnAddEating;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         String insert_3 = "INSERT INTO NhaHang VALUES(null, 'Pha lau', 15000, 'Quan 3')";
         //sqLiteDB.QueryData(insert_1);
 
+        btnAddEating = findViewById(R.id.btnAddEating);
         recyclerView = findViewById(R.id.recycle_view);
         arrayRes = new ArrayList<>();
         nhaHangAdapter = new NhaHangAdapter(MainActivity.this,arrayRes);
@@ -50,6 +56,20 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Get value
+        GetData();
+
+        btnAddEating.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this,ThemMonAnActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    public void GetData()
+    {
+        arrayRes.clear();
         Cursor cursor = sqLiteDB.GetData("SELECT * FROM NhaHang");
         while (cursor.moveToNext())
         {
@@ -60,6 +80,10 @@ public class MainActivity extends AppCompatActivity {
             arrayRes.add(new NhaHang(id,ten_mon_an,gia_mon_an,dia_diem));
         }
         nhaHangAdapter.notifyDataSetChanged();
-
+    }
+    @Override
+    protected void onRestart() {
+        GetData();
+        super.onRestart();
     }
 }

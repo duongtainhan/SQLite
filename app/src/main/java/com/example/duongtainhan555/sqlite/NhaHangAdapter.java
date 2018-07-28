@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,11 +52,23 @@ public class NhaHangAdapter extends RecyclerView.Adapter<NhaHangAdapter.ViewHold
     {
         TextView txtTen, txtGia,txtDiaChi;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull final View itemView) {
             super(itemView);
             txtTen = itemView.findViewById(R.id.txtTen);
             txtGia = itemView.findViewById(R.id.txtGia);
             txtDiaChi = itemView.findViewById(R.id.txtDiaChi);
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    String delete = "DELETE FROM NhaHang Where Id = '"+arrayRes.get(getPosition()).getId()+"'";
+                    MainActivity.sqLiteDB.QueryData(delete);
+                    arrayRes.remove(arrayRes.get(getPosition()));
+                    notifyDataSetChanged();
+                    Toast.makeText(context,"Xoa thanh cong", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            });
         }
+
     }
 }
